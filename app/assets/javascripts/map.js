@@ -2,8 +2,9 @@ var directionsDisplay;
 var directionsService;
 var map;
 
+var startLoc;
+var endLoc;
 var startMarker;
-var endMarker;
 
 
 function initMap() {
@@ -24,41 +25,37 @@ function initMap() {
 }
 
 function addLocation(latLng) {
-    if(startMarker === undefined) {
-        addStartLocation(latLng);
-    }
-    else if (endMarker === undefined) {
-        addEndLocation(latLng);
-        calcRoute(startMarker, endMarker)
-    }
-    // else {
-    //     addWaypoint(latLng);
-    // }
-}
-function addStartLocation(latLng) {
-    startMarker = new google.maps.Marker({
-        position: latLng,
-        map: map,
-        title: 'Start'
-    });
+    if(startLoc === undefined) {
+        startLoc = latLng;
+        startMarker = new google.maps.Marker({
+            position: latLng,
+            map: map,
+            title: 'Start'
+        });
 
+    }
+    else if (endLoc === undefined) {
+        endLoc = latLng;
+        calcRoute(startLoc, endLoc);
+    }
 }
-function addEndLocation(latLng) {
-    endMarker = new google.maps.Marker({
-        position: latLng,
-        map: map,
-        title: 'Finish'
-    });
+function clearIt() {
+    startLoc = undefined;
+    endLoc = undefined;
+    startMarker.setMap(null);
+    directionsDisplay.set('directions', null);
 }
+
 function calcRoute(start, end) {
     var request = {
-        origin: start.position,
-        destination: end.position,
+        origin: start,
+        destination: end,
         travelMode: 'BICYCLING'
     };
     directionsService.route(request, function(result, status) {
         if (status == 'OK') {
             directionsDisplay.setDirections(result);
+            startMarker.setMap(null);
         }
         else {
             console.log("Something bad happened determining directions: " + status);
