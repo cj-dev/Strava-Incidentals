@@ -4,6 +4,7 @@ var main_map;
 
 var startLoc;
 var endLoc;
+var intervalLocs;
 var startMarker;
 
 
@@ -22,6 +23,7 @@ function initMap() {
         addLocation(event.latLng);
     })
 
+    modLatLng();
 }
 
 function addLocation(latLng) {
@@ -39,6 +41,7 @@ function addLocation(latLng) {
         calcRoute(startLoc, endLoc);
     }
 }
+
 function clearIt() {
     startLoc = undefined;
     endLoc = undefined;
@@ -56,9 +59,24 @@ function calcRoute(start, end) {
         if (status == 'OK') {
             directionsDisplay.setDirections(result);
             startMarker.setMap(null);
+            intervalLocs = findPointsEveryMeters(result.routes[0].overview_path, 1000);
+            drawIntervals(intervalLocs);
         }
         else {
             console.log("Something bad happened determining directions: " + status);
         }
     });
 }
+
+function drawIntervals(intervals) {
+    if( intervals.length < 1 ) {
+        return;
+    }
+    $.each( intervals, function( index, value ){
+        intervalMarker = new google.maps.Marker({
+            position: value,
+            map: main_map,
+            title: "interval " + index
+        });
+    });
+};
