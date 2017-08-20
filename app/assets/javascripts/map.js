@@ -1,6 +1,6 @@
 var directionsDisplay;
 var directionsService;
-var map;
+var main_map;
 
 var startLoc;
 var endLoc;
@@ -15,10 +15,10 @@ function initMap() {
           zoom:7,
           center: chicago
         }
-    map = new google.maps.Map(document.getElementById('map'), mapOptions);
-    directionsDisplay.setMap(map);
+    main_map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    directionsDisplay.setMap(main_map);
 
-    google.maps.event.addListener(map, "click", function(event) {
+    google.maps.event.addListener(main_map, "click", function(event) {
         addLocation(event.latLng);
     })
 
@@ -29,7 +29,7 @@ function addLocation(latLng) {
         startLoc = latLng;
         startMarker = new google.maps.Marker({
             position: latLng,
-            map: map,
+            map: main_map,
             title: 'Start'
         });
 
