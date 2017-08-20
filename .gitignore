@@ -25,3 +25,5 @@
 # vim
 *.swp
 *.swo
+
+/config/secrets.yml
