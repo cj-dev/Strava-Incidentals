@@ -60,7 +60,7 @@ function calcRoute(start, end) {
             directionsDisplay.setDirections(result);
             startMarker.setMap(null);
             intervalLocs = findPointsEveryMeters(result.routes[0].overview_path, 1000);
-            drawIntervals(intervalLocs);
+            // drawIntervals(intervalLocs); // debugging
         }
         else {
             console.log("Something bad happened determining directions: " + status);
