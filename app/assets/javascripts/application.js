@@ -14,5 +14,6 @@
 //= require turbolinks
 //= require jquery
 //= require distance
+//= require strava
 //= require map
 //= require_tree .
