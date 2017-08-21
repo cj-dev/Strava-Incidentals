@@ -7,6 +7,11 @@ var endLoc;
 var intervalLocs;
 var startMarker;
 
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+    }
+});
 
 function initMap() {
     directionsService = new google.maps.DirectionsService;
@@ -65,6 +70,7 @@ function calcRoute(start, end) {
         }
         else {
             console.log("Something bad happened determining directions: " + status);
+            clearIt();
         }
     });
 }
