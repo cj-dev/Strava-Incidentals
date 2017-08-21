@@ -1,4 +1,4 @@
-var segments = [];
+// var segments = [];
 
 function fetchRouteSegments(intervalLocs, radius) {
     var requestData = {"boundsArray": []};
@@ -14,7 +14,7 @@ function fetchRouteSegments(intervalLocs, radius) {
 
     var queryEndpoint = window.location.origin + '/strava/segments/explore'
     $.post(queryEndpoint, requestData, function(data) {
-        segments.push(data.segments);
+        overlaySegments(data.segments);
     });
 }
 
@@ -27,7 +27,7 @@ function fetchPointSegments(center, radius) {
         "bounds": `${swBound.lat()},${swBound.lng()},${neBound.lat()},${neBound.lng()}`}
     var queryEndpoint = window.location.origin + '/strava/segments/explore'
     $.get(queryEndpoint, requestData, function(data) {
-        segments.push(data.segments);
+        overlaySegments(data.segments);
     });
 }
 

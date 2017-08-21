@@ -76,7 +76,20 @@ function calcRoute(start, end) {
 }
 
 function overlaySegments(segments) {
-    console.log(segments);
+    $.each(segments, function( index, segment ) {
+        segmentMarker = new google.maps.Marker({
+            position: new google.maps.LatLng(
+                segment.start_latlng[0], segment.start_latlng[1]),
+            map: main_map,
+            title: segment.name
+        });
+        segmentPath = new google.maps.Polyline({
+            path: google.maps.geometry.encoding.decodePath(segment.points),
+            strokeColor: 'DarkOrange',
+            map: main_map,
+        });
+
+    });
 }
 
 function drawIntervals(intervals) {
