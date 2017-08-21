@@ -13,6 +13,12 @@ map = function() {
     var endLoc;
     var intervalLocs;
     var startMarker;
+
+    /**
+    * For maximum usefulness, use a map of {id: Marker|Path} pairs
+    */
+    var segmentMarkerMap = {}
+    var segmentPathMap = {}
     
     function initMap() {
         directionsService = new google.maps.DirectionsService;
@@ -95,19 +101,29 @@ map = function() {
     */
     function overlaySegments(segments) {
         $.each(segments, function( index, segment ) {
+            segmentId = parseInt(segment.id)
             segmentMarker = new google.maps.Marker({
                 position: new google.maps.LatLng(
                     segment.start_latlng[0], segment.start_latlng[1]),
                 map: main_map,
-                title: segment.name
-            });
-            google.maps.event.addListener(segmentMarker, 'click', function() {
-                // add to route
+                title: segment.name,
+                segmentMarkerId: segmentId
             });
             segmentPath = new google.maps.Polyline({
                 path: google.maps.geometry.encoding.decodePath(segment.points),
                 strokeColor: 'DarkOrange',
                 map: main_map,
+                segmentPathId: segmentId
+            });
+            segmentMarkerMap[segmentId] = segmentMarker;
+            segmentPathMap[segmentId] = segmentPath;
+            segmentMarker.addListener('mouseover', function() {
+                path = segmentPathMap[this.segmentMarkerId]
+                path.setOptions({'strokeColor': 'DarkRed'});
+            });
+            segmentMarker.addListener('mouseout', function() {
+                path = segmentPathMap[this.segmentMarkerId]
+                path.setOptions({'strokeColor': 'DarkOrange'});
             });
 
         });
