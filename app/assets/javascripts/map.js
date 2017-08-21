@@ -13,6 +13,7 @@ map = function() {
     var endLoc;
     var intervalLocs;
     var startMarker;
+    var segmentWayPoints = [];
 
     /**
     * For maximum usefulness, use a map of {id: Marker|Path} pairs
@@ -64,10 +65,17 @@ map = function() {
     * Remove elements from the map
     */
     function clearIt() {
-        startLoc = undefined;
-        endLoc = undefined;
+        // startLoc = undefined;
+        // endLoc = undefined;
+        intervalLocs = undefined;
         startMarker.setMap(null);
         directionsDisplay.set('directions', null);
+        $.each(segmentMarkerMap, function (index, value) {
+            value.setMap(null)
+        });
+        $.each(segmentPathMap, function (index, value) {
+            value.setMap(null)
+        });
     }
 
     /**
@@ -75,14 +83,17 @@ map = function() {
     * and draws it on the map. Then requests nearby strava segments along
     * the route from Strava-Incidentals, drawing them too.
     */
-    function calcRoute(start, end) {
+    function calcRoute(start, end, waypoints = []) {
         var request = {
             origin: start,
             destination: end,
-            travelMode: 'BICYCLING'
+            travelMode: 'BICYCLING',
+            waypoints: waypoints,
+            // optimizeWaypoints: true,
         };
         directionsService.route(request, function(result, status) {
             if (status == 'OK') {
+                clearIt();
                 directionsDisplay.setDirections(result);
                 startMarker.setMap(null);
                 intervalLocs = distance.findPointsEveryMeters(
@@ -117,13 +128,21 @@ map = function() {
             });
             segmentMarkerMap[segmentId] = segmentMarker;
             segmentPathMap[segmentId] = segmentPath;
+            segmentMarker.addListener('click', function() {
+                path = segmentPathMap[this.segmentMarkerId].getPath();
+                startWayPoint = {location: path.getArray()[0]};
+                endWayPoint = {location: path.getArray()[path.getArray().length - 1]};
+                segmentWayPoints.push(startWayPoint);
+                segmentWayPoints.push(endWayPoint);
+                calcRoute(startLoc, endLoc, segmentWayPoints);
+            });
             segmentMarker.addListener('mouseover', function() {
-                path = segmentPathMap[this.segmentMarkerId]
-                path.setOptions({'strokeColor': 'DarkRed'});
+                segmentPath = segmentPathMap[this.segmentMarkerId]
+                segmentPath.setOptions({'strokeColor': 'DarkRed'});
             });
             segmentMarker.addListener('mouseout', function() {
-                path = segmentPathMap[this.segmentMarkerId]
-                path.setOptions({'strokeColor': 'DarkOrange'});
+                segmentPath = segmentPathMap[this.segmentMarkerId]
+                segmentPath.setOptions({'strokeColor': 'DarkOrange'});
             });
 
         });
