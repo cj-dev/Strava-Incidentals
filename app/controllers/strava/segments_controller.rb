@@ -1,4 +1,5 @@
 require 'strava/api/v3'
+require 'set'
 
 class Strava::SegmentsController < ApplicationController
     def explore
@@ -7,9 +8,12 @@ class Strava::SegmentsController < ApplicationController
 
     def batch_explore
         bounds_batch = params[:boundsArray]
-        results = {segments: []}
+        results = {segments: Set.new}
         bounds_batch.each do |bounds|
-            results[:segments].push(*request_segments(bounds)['segments'])
+            segments = request_segments(bounds)['segments']
+            segments.each do |segment|
+                results[:segments].add(segment)
+            end
         end
         render json: results
     end
