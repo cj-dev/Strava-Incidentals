@@ -1,8 +1,11 @@
-/** Largely ripped from Daniel Vassallo's answer to
-    https://stackoverflow.com/questions/2698112/how-to-add-markers-on-google-maps-polylines-based-on-distance-along-the-line
-    in turn based off Chris Veness's work on lat/lon distance calculators
-    and modified for use with GMaps API v3 and the context of this project.
-**/
+/**
+* Largely ripped from Daniel Vassallo's answer to
+* https://stackoverflow.com/questions/2698112/how-to-add-markers-on-google-maps-polylines-based-on-distance-along-the-line
+* in turn based off Chris Veness's work on lat/lon distance calculators
+* and modified for use with GMaps API v3 and the context of this project.
+*/
+
+earthRadius = 6378 // kilometers
 
 Number.prototype.toRad = function() {
     return this * Math.PI / 180;
@@ -10,6 +13,18 @@ Number.prototype.toRad = function() {
 
 Number.prototype.toDeg = function() {
     return this * 180 / Math.PI;
+}
+
+/** 
+* Returns a new LatLng object given a LatLng object and changes
+* in latitude and longitude. Based on
+* https://stackoverflow.com/questions/7477003/calculating-new-longtitude-latitude-from-old-n-meters
+*/
+function dLatLng(point, dLat, dLng) {
+    resultLat = point.lat() + ((dLat/1000) / earthRadius) * (180/Math.PI);
+    resultLng = point.lng() + ((dLng/1000) / earthRadius) * (180/Math.PI)
+        / Math.cos(point.lat() * Math.PI/180);
+    return new google.maps.LatLng(resultLat, resultLng)
 }
 
 function modLatLng() {
