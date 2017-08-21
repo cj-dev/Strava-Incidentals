@@ -32,6 +32,12 @@ map = function() {
         distance.modLatLng();
     }
 
+    /**
+    * Add a location on the map. If no locations are defined, the location
+    * is the start location for directions. If a start is defined, the
+    * location is the end location for directions and triggers a request
+    * for directions
+    */
     function addLocation(latLng) {
         if(startLoc === undefined) {
             startLoc = latLng;
@@ -48,6 +54,9 @@ map = function() {
         }
     }
 
+    /**
+    * Remove elements from the map
+    */
     function clearIt() {
         startLoc = undefined;
         endLoc = undefined;
@@ -55,6 +64,11 @@ map = function() {
         directionsDisplay.set('directions', null);
     }
 
+    /**
+    * Requests directions from google for the given start and end locations
+    * and draws it on the map. Then requests nearby strava segments along
+    * the route from Strava-Incidentals, drawing them too.
+    */
     function calcRoute(start, end) {
         var request = {
             origin: start,
@@ -68,7 +82,6 @@ map = function() {
                 intervalLocs = distance.findPointsEveryMeters(
                     result.routes[0].overview_path, 1000);
                 strava.fetchRouteSegments(intervalLocs, 500);
-                // drawIntervals(intervalLocs); // debugging
             }
             else {
                 console.log("Something bad happened determining directions: " + status);
@@ -77,6 +90,9 @@ map = function() {
         });
     }
 
+    /**
+    * Overlay the given segments on the map
+    */
     function overlaySegments(segments) {
         $.each(segments, function( index, segment ) {
             segmentMarker = new google.maps.Marker({

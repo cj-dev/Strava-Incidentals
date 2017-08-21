@@ -2,6 +2,11 @@
 
 strava = function() {
 
+    /**
+    * Requests strava segments along an array representing a sampling
+    * of locations along a route. Supply larger radius to expand the search
+    * further from the original route.
+    */
     function fetchRouteSegments(intervalLocs, radius) {
         var requestData = {"boundsArray": []};
         $.each( intervalLocs, function( index, value ){
@@ -20,6 +25,7 @@ strava = function() {
         });
     }
 
+    /** Requests segments around a single point */
     function fetchPointSegments(center, radius) {
         var bounds = defineBoundingBox(center, radius);
         var swBound = bounds[0]
@@ -34,6 +40,11 @@ strava = function() {
     }
 
 
+    /**
+    * Given a centerpoint and a "radius", calculates a bounding box using
+    * radius as the distance from the center to a corner of the box. Strava
+    * demands boxes.
+    */
     function defineBoundingBox(center, radius) {
         var theDiagonal = radius * Math.sqrt(2)
         var sw = distance.dLatLng(center, -theDiagonal, -theDiagonal);
@@ -42,6 +53,12 @@ strava = function() {
     }
 
 
+    /**
+    * Determine on behalf of the user whether this is a feasible segment
+    * to add to one's route based on the start and end locations and direction
+    *
+    * To be implemented?
+    */
     function scrutinize(directions, segments) {
         //etcetera
     }
